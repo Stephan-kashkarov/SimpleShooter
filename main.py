@@ -24,7 +24,7 @@ class Game(object):
 		while True:
 			state = menu.menu(self.screen)
 			if state == 0:
-				game.singleplayer(self.screen)
+				game.singlePlayer(self.screen)
 			elif state == 1:
 				print("TWO SELECTED")
 				pass

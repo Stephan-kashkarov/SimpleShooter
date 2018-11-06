@@ -29,33 +29,10 @@ class Server(object):
 		self.gameState = False
 		self.map = _map
 		self.units = {
-			'keys': [0, 1, 2, 3],
-			0: {
-				'start': [],
-				'resouces': {},
-				'alive': False,
-				'units': ()
-			},
-			1: {
-				'start': [],
-				'resouces': {},
-				'alive': False,
-				'units': ()
-			},
-			2: {
-				'start': [],
-				'resouces': {},
-				'alive': False,
-				'units': ()
-			},
-			3: {
-				'start': [],
-				'resouces': {},
-				'alive': False,
-				'units': ()
-			}
+			'bullets': [],
+			'players': [],
+			'zombies': []
 		}
-		self.events = []
 		self.key = key
 
 		# Endpoints
@@ -93,17 +70,6 @@ class Server(object):
 			_methods=['POST']
 		)
 		self.add_endpoint(
-			endpoint='/events/get',
-			endpoint_name='getEvents',
-			handler=self.getEvents
-		)
-		self.add_endpoint(
-			endpoint='/events/add',
-			endpoint_name='addEvents',
-			handler=self.addEvents,
-			_methods=['POST']
-		)
-		self.add_endpoint(
 			endpoint='/game/over',
 			endpoint_name='gameOver',
 			handler=self.gameOver
@@ -122,23 +88,14 @@ class Server(object):
 	def addUnits(self):
 		data = json.loads(request.json)
 		if data['key'] == self.key:
-			for i in self.units['keys']:
-				self.units[str(i)]['units'].append(
-					set(data[str(i)]['units']) - set(self.units[str(i)]['units']))
-			return 'True'
+			data = data['payload']
+			self.units[data['key']][data['index']] = data['value']
 		return 'False'
 
 	def setUnits(self):
 		data = json.loads(request.json)
 		if data['key'] == self.key:
-			self.units = data['units']
-			return 'True'
-		return 'False'
-
-	def addEvents(self):
-		data = json.loads(request.json)
-		if data['key'] == self.key:
-			self.events.append(data['events'])
+			self.units = data['payload']
 			return 'True'
 		return 'False'
 
@@ -149,8 +106,6 @@ class Server(object):
 	def getUnits(self):
 		return json.dumps(self.units)
 
-	def getEvents(self):
-		return json.dumps(list(self.events))
 
 	# Misc routes
 
@@ -164,8 +119,7 @@ class Server(object):
 		return "<title>Hell0!</title>"
 
 	def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, _methods=None):
-		self.app.add_url_rule(endpoint, endpoint_name,
-		                      EndpointAction(handler), methods=_methods)
+		self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler), methods=_methods)
 
 
 # Testing

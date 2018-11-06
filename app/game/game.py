@@ -1,77 +1,48 @@
-import os
-import json
-import requests
+import time
+import random
+import threading
+import multiprocessing
 
 import pygame as pg
 
-
-class options(object):
-	def __init__(self, serverIP, mapType, mapSize, key):
-		self.serverIP = serverIP
-		self.mapType = mapType
-		self.mapSize = mapSize
-		self.key = key
+import app.game.match as match
+import app.game.map.map as maps
+import app.game.player as player
+import app.game.server as server
 
 
-class Match(object):
-	def __init__(self, options, _map):
-		self.serverIP = 'http://' + options.serverIP
-		self.map = _map
-		self.events = []
-		self.key = options.key
-		self.players = self.getUnits()
-		self.sendUnits()
-		self.sendMap()
+def singlePlayer(screen):
+	options = match.options(
+		'127.0.0.1:5000',
+		1000,
+		random.randint(1000, 9999)
+	)
+	player1 = player.PlayerClient(options.serverIP, screen)
+	player2 = player.AI(options.serverIP)
 
-	# Unit Processing
+	_map = maps.generateMap(options.mapSize)
+	host = server.Server(_map, options.key)
+	server_ = multiprocessing.Process(target=host.run)
+	server_.start()
+	# allow for the server to initializse
+	time.sleep(1)
+	game = match.Match(options, _map)
 
-	def getUnits(self):
-		return requests.get(str(self.serverIP + '/units/get')).json()
-
-	def sendUnits(self):
-		requests.post(
-			str(self.serverIP + '/units/set'),
-			json=json.dumps({
-				'key': self.key,
-				'units': self.units
-			})
-		)
-
-	# Map Processing
-	def sendMap(self):
-		requests.post(str(self.serverIP + '/map/set'),
-                    json=json.dumps({
-			'key': self.key,
-			'map': self.map
-                    }))
-
-	# Event processing
-	def getEvents(self):
-		request = requests.get(str(self.serverIP + '/events/get'))
-		for event in list(set(request.json()) - set(self.events)):
-			self.events.append(event)
-
-	def executeEvents(self):
-		events = []
-		for event in [x for x in self.events[::-1]]:
-			event = self.events.pop(event)
-			event.step()
-			if not event.complete:
-				events.append(event)
-		self.events = events
-
-	def checkWin(self):
-		win = bool(requests.post(self.serverIP + '/game/over'))
-		for i in self.units['keys']:
-			if not len(self.units[str(i)]['units']) or win:
-				print("Match: Game Over!")
-				return True
-		return False
-
-	def run(self):
-		while True:
-			print('Game: tick')
-			self.units = self.getUnits()
-			self.sendUnits()
-			if self.checkWin() == True:
-				break
+	# Making Threads
+	gameThread = threading.Thread(target=game.run)
+	aiThread = threading.Thread(target=player2.run)
+	# Starting Threads
+	gameThread.start()
+	aiThread.start()
+	# Running clientside
+	state = player1.run()
+	# Joining of threads
+	gameThread.join()
+	aiThread.join()
+	server_.terminate()
+	server_.join(5)
+	time.sleep(1)
+	if state == 'quit':
+		pg.quit()
+		quit()
+	return 0
