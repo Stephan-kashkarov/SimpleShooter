@@ -25,7 +25,7 @@ class textBox(object):
 		self.screen.blit(self.textSurf, self.pos)
 
 
-class buttonArray(pg.sprite.Group):
+class buttonArray(object):
 	def __init__(self, screen, items):
 		self.screen = screen
 		self.width, self.height = self.screen.get_rect().size
@@ -35,37 +35,58 @@ class buttonArray(pg.sprite.Group):
 
 
 	def calcitemPoses(self):
-		poses = []
+		poses = [None]*len(self.items)
 		if len(self.items) % 2 == 0:
 			itemsLen = len(self.items)
 			mod = 0
-			for i in range(0, itemsLen/2, -1):
+			for i in range(int(itemsLen/2), -1, -1):
 				poses[i] = self.height + mod
 				mod += 200
-			mod = 0
-			for i in range(itemsLen/2, itemsLen):
+			mod = 200
+			for i in range(int(itemsLen/2)+1, itemsLen):
 				poses[i] = self.height - mod
 				mod += 200
+		else:
+			itemsLen = len(self.items)
+			mod = 0
+			for i in range(int(itemsLen/2), 0, -1):
+				poses[i] = self.height + mod
+				mod += 200
+			poses[int(itemsLen/2)+1] = self.height
+			mod = 200
+			for i in range(int(itemsLen/2) + 2 , itemsLen):
+				poses[i] = self.height - mod
+				mod -= 200
 		return poses
 
 	def genButtons(self, poses):
 		for index, item in enumerate(self.items):
-			item = Button(item, index, poses[index], color=(230, 230, 230))
+			item = Button(item, index, (int(self.height/2), poses[index]), self.screen, color=(230, 230, 230))
 			self.items[index] = item
 
-class Button(pg.sprite.Sprite):
+	def run(self):
+		for item in self.items:
+			returns = item.draw()
+			if returns:
+				return returns
+		return False
+
+class Button(object):
 	def __init__(self, title, value, pos, screen, color=(255, 255, 255)):
 		self.screen = screen
 		self.title = title
 		self.value = value
 		self.pos = pos
+		self.x, self.y = self.pos
 		self.color = color
 		self.surface = textBox(title, pos[0], pos[1], 20, color, screen)
 
 	def hover(self):
 		pos = pg.mouse.get_pos()
-		if pos[1] in range(self.y, self.y + self.surface.height):
-			if pos[0] in range(self.x, self.x + self.surface.width):
+		y = int(self.y)
+		if int(pos[1]) in range(y, y + int(self.surface.height)):
+			x = int(self.x)
+			if int(pos[0]) in range(x, x + int(self.surface.width)):
 				return True
 		return False
 
@@ -86,5 +107,6 @@ class Button(pg.sprite.Sprite):
 			return self.value
 		else:
 			self.draw()
+			return False
 
 

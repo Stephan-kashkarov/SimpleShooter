@@ -21,17 +21,21 @@ class Game(object):
 		self.run()
 
 	def run(self):
-		state = menu.menu(self.screen)
-		if state == 0:
-			game.singleplayer(self.screen)
-		elif state == 1:
-			options = menu.multiplayerSettings(self.screen)
-			game.multiplayer(self.screen, options)
-		elif state == 2:
-			menu.settings(self.screen)
-		else:
-			pg.quit()
-			quit()
+		while True:
+			state = menu.menu(self.screen)
+			if state == 0:
+				pass
+				# game.singleplayer(self.screen)
+			elif state == 1:
+				pass
+				# options = menu.multiplayerSettings(self.screen)
+				# game.multiplayer(self.screen, options)
+			elif state == 2:
+				pass
+				# menu.settings(self.screen)
+			else:
+				pg.quit()
+				quit()
 
 
 if __name__ == '__main__':

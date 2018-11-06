@@ -11,21 +11,28 @@ class simpleMenu(object):
 			settings.SCREEN_WIDTH/2, # x
 			settings.SCREEN_HEIGHT/6, # y
 			42, # fontsize
-			(0,0,0), # color
+			(255,255,255), # color
 			screen
 		)
 		self.items = text.buttonArray(
 			screen,
-			items,
-			True
+			items
 		)
+	
+	def events(self):
+		for event in pg.events.get():
+			if event.type == pg.QUIT:
+				pg.quit()
+				quit()
 
 	def run(self):
 		selected = False
 		while not selected:
-			pg.display.fill((200, 200, 200))
+			pg.event.pump()
+			self.screen.fill((200, 200, 200))
 			self.title.draw()
-			selected = self.items.draw()
+			selected = self.items.run()
+			self.events()
 			pg.display.flip()
 		return selected
 
