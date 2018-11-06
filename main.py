@@ -24,13 +24,16 @@ class Game(object):
 		while True:
 			state = menu.menu(self.screen)
 			if state == 0:
+				print("ONE SELECTED")
 				pass
 				# game.singleplayer(self.screen)
 			elif state == 1:
+				print("TWO SELECTED")
 				pass
 				# options = menu.multiplayerSettings(self.screen)
 				# game.multiplayer(self.screen, options)
 			elif state == 2:
+				print("THREE SELECTED")
 				pass
 				# menu.settings(self.screen)
 			else:

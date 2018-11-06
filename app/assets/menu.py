@@ -10,8 +10,9 @@ class simpleMenu(object):
 			title, # Text
 			settings.SCREEN_WIDTH/2, # x
 			settings.SCREEN_HEIGHT/6, # y
-			42, # fontsize
-			(255,255,255), # color
+			72, # fontsize
+			(0, 0, 0),
+			(200, 200, 200),  # color
 			screen
 		)
 		self.items = text.buttonArray(
@@ -20,7 +21,7 @@ class simpleMenu(object):
 		)
 	
 	def events(self):
-		for event in pg.events.get():
+		for event in pg.event.get():
 			if event.type == pg.QUIT:
 				pg.quit()
 				quit()
