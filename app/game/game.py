@@ -14,7 +14,7 @@ import app.game.server as server
 def singlePlayer(screen):
 	options = match.options(
 		'127.0.0.1:5000',
-		1000,
+		256,
 		random.randint(1000, 9999)
 	)
 	player1 = player.PlayerClient(options.serverIP, screen)
