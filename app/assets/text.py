@@ -42,27 +42,29 @@ class buttonArray(object):
 			mod = 0
 			for i in range(int(itemsLen/2), -1, -1):
 				poses[i] = int(self.height/2) + mod
-				mod += 150
-			mod = 150
+				mod += 100
+			mod = 100
 			for i in range(int(itemsLen/2)+1, itemsLen):
 				poses[i] = int(self.height/2) - mod
-				mod += 150
+				mod += 100
 		else:
 			itemsLen = len(self.items)
 			mod = 0
 			for i in range(int(itemsLen/2), 0, -1):
 				poses[i] = int(self.height/2) + mod
-				mod += 150
+				mod += 100
 			poses[int(itemsLen/2)+1] = int(self.height/2)
-			mod = 150
+			mod = 100
 			for i in range(int(itemsLen/2) + 2 , itemsLen):
 				poses[i] = int(self.height/2) - mod
-				mod -= 150
+				mod -= 100
 		return list(reversed(poses))
 
 	def genButtons(self, poses):
 		for index, item in enumerate(self.items):
-			item = Button(item, index, (int(self.width/2), poses[index]), self.screen, color=(230, 230, 230))
+			if item == "SinglePlayer":
+				print(index)
+			item = Button(item, index+1, (int(self.width/2), poses[index]), self.screen, color=(230, 230, 230))
 			self.items[index] = item
 
 	def run(self):
@@ -82,7 +84,7 @@ class Button(object):
 		self.color = color
 		self.bgColor = bgColor
 		self.altColour = (self.color[0] + 100, self.color[1] + 100, self.color[2] + 100)
-		self.surface = textBox(title, pos[0], pos[1], 54, color, bgColor, screen)
+		self.surface = textBox(title, pos[0], pos[1], 42, color, bgColor, screen)
 
 	def hover(self):
 		pos = pg.mouse.get_pos()

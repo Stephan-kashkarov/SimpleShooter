@@ -18,7 +18,7 @@ def singlePlayer(screen):
 		256,
 		random.randint(1000, 9999)
 	)
-	player1 = player.PlayerClient(options.serverIP, screen)
+	player1 = player.Player(options.serverIP, screen)
 	player2 = player.AI(options.serverIP)
 
 	_map = maps.generateMap(options.mapSize)

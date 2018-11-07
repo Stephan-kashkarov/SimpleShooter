@@ -17,16 +17,16 @@ class Match(object):
 		self.serverIP = 'http://' + options.serverIP
 		self.map = _map
 		self.key = options.key
-		self.players = self.getUnits()
-		self.sendUnits()
+		self.units = []
+		self.setUnits()
 		self.sendMap()
 
 	# Unit Processing
 
 	def getUnits(self):
-		return requests.get(str(self.serverIP + '/units/get')).json()
+		self.units = requests.get(str(self.serverIP + '/units/get')).json()
 
-	def sendUnits(self):
+	def setUnits(self):
 		requests.post(
 			str(self.serverIP + '/units/set'),
 			json=json.dumps({
@@ -52,8 +52,8 @@ class Match(object):
 	def run(self):
 		while True:
 			print('Game: tick')
-			self.units = self.getUnits()
+			self.getUnits()
 			self.updateUnits()
-			self.sendUnits()
+			self.setUnits()
 			if self.checkWin() == True:
 				break
