@@ -43,7 +43,7 @@ class Player(Client):
 		self.resX, self.resY = self.screen.get_rect().size
 		self.tileSize = 16
 		self.numTiles = (self.resX / self.tileSize, self.resY / self.tileSize)
-		self.pos = (0,0)
+		self.pos = [0,0]
 		self.controls = {
 			'up': pg.K_w,
 			'down': pg.K_s,
@@ -84,8 +84,6 @@ class Player(Client):
 		for mapY in yranges:
 			for mapX in xranges:
 				point = self.map[mapY][mapX]
-				# print("Point (x: {}, y: {}) is {}".format(mapX, mapY, point))
-				# print("Screen (x: {}, y: {})".format(screenX, screenY))
 				if point == "0":
 					color = (0,200,0)
 				elif point == "1":
@@ -98,11 +96,8 @@ class Player(Client):
 						pg.Rect(screenX, screenY, self.tileSize, self.tileSize)
 					)
 				screenX += self.tileSize
-				if screenX > self.numTiles[0]:
-					break
+			screenX = 0
 			screenY += self.tileSize
-			if screenY > self.numTiles[1]:
-				break
 		pg.display.flip()
 
 	def events(self):
@@ -111,13 +106,13 @@ class Player(Client):
 				return False
 		pressed = pg.key.get_pressed()
 		if pressed[self.controls['up']]:
-			self.pos -= (0, 1)
+			self.pos[1] -= 1
 		elif pressed[self.controls['down']]:
-			self.pos += (0, 1)
+			self.pos[1] += 1
 		elif pressed[self.controls['left']]:
-			self.pos -= (1, 0)
+			self.pos[0] -= 1
 		elif pressed[self.controls['right']]:
-			self.pos += (1, 0)
+			self.pos[0] += 1
 
 		pg.event.pump()
 	
