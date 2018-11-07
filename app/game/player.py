@@ -91,10 +91,10 @@ class Player(Client):
 				elif point == "#":
 					color = (255,255,255)
 				pg.draw.rect(
-						self.screen,
-						color,
-						pg.Rect(screenX, screenY, self.tileSize, self.tileSize)
-					)
+					self.screen,
+					color,
+					pg.Rect(screenX, screenY, self.tileSize, self.tileSize)
+				)
 				screenX += self.tileSize
 			screenX = 0
 			screenY += self.tileSize
