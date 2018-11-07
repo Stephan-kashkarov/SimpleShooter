@@ -18,16 +18,16 @@ def singlePlayer(screen):
 		256,
 		random.randint(1000, 9999)
 	)
-	player1 = player.Player(options.serverIP, screen)
-	player2 = player.AI(options.serverIP)
 
 	_map = maps.generateMap(options.mapSize)
 	host = server.Server(_map, options.key)
 	server_ = multiprocessing.Process(target=host.run)
 	server_.start()
 	# allow for the server to initializse
-	time.sleep(1)
+	time.sleep(3)
 	game = match.Match(options, _map)
+	player1 = player.Player(options.serverIP, screen)
+	player2 = player.AI(options.serverIP)
 
 	# Making Threads
 	gameThread = threading.Thread(target=game.run)

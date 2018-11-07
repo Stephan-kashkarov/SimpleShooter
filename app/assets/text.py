@@ -62,8 +62,6 @@ class buttonArray(object):
 
 	def genButtons(self, poses):
 		for index, item in enumerate(self.items):
-			if item == "SinglePlayer":
-				print(index)
 			item = Button(item, index+1, (int(self.width/2), poses[index]), self.screen, color=(230, 230, 230))
 			self.items[index] = item
 

@@ -1,3 +1,4 @@
+import time
 import requests
 
 import pygame as pg
@@ -11,6 +12,7 @@ class Client(object):
 		self.ip = "http://" + ip
 		self.map = ""
 		self.pos = (0,0)
+		self.getMap()
 		# self.sprite = soldier.Soldier()
 
 	def getMap(self):
@@ -52,10 +54,36 @@ class Player(Client):
 	def gui(self):
 		screenX = 0
 		screenY = 0
+
+		#calculate offset
+		offsetX = 0
+		offsetY = 0
+
+		#X offset
+		if (self.pos[0] - int(self.numTiles[0] / 2)) < 0:
+			offsetX = (self.pos[0] - int(self.numTiles[0] / 2))
+		elif (self.pos[0] - int(self.numTiles[0] / 2)) > len(self.map):
+			offsetX = len(self.map) - (self.pos[0] - int(self.numTiles[0] / 2))
+
+		#Y offset
+		if (self.pos[1] - int(self.numTiles[1] / 2)) < 0:
+			offsetY = (self.pos[1] - int(self.numTiles[1] / 2))
+		elif (self.pos[1] - int(self.numTiles[1] / 2)) > len(self.map[0]):
+			offsetY = len(self.map[0]) - (self.pos[1] - int(self.numTiles[1] / 2))
+
+		#fill screen
 		self.screen.fill((0,0,0))
-		for mapY in range(self.pos[1] - int(self.numTiles[1] / 2), self.pos[1] + int(self.numTiles[1] / 2)):
-			for mapX in range(self.pos[0] - int(self.numTiles[0] / 2), self.pos[0] + int(self.numTiles[0] / 2)):
+
+		#paint screen
+		for mapY in range(
+			(self.pos[1] - int(self.numTiles[1] / 2)) - offsetY,
+			(self.pos[1] + int(self.numTiles[1] / 2)) - offsetY):
+			for mapX in range(
+				(self.pos[0] - int(self.numTiles[0] / 2)) - offsetX,
+				(self.pos[0] + int(self.numTiles[0] / 2)) - offsetX):
 				point = self.map[mapY][mapX]
+				print("Point (x: {}, y: {}) is {}".format(mapX, mapY, point))
+				print("Screen (x: {}, y: {})".format(screenX, screenY))
 				if point == "0":
 					color = (0,200,0)
 				elif point == "1":
@@ -69,6 +97,7 @@ class Player(Client):
 					)
 				screenX += self.tileSize
 			screenY += self.tileSize
+		pg.display.flip()
 
 	def events(self):
 		for event in pg.event.get():
