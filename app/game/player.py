@@ -74,29 +74,35 @@ class Player(Client):
 		#fill screen
 		self.screen.fill((0,0,0))
 
-		#paint screen
-		for mapY in range(
+		xranges = range((self.pos[0] - int(self.numTiles[0] / 2)) - offsetX, (self.pos[0] + int(self.numTiles[0] / 2)) - offsetX)
+		print(xranges)
+		yranges = range(
 			(self.pos[1] - int(self.numTiles[1] / 2)) - offsetY,
-			(self.pos[1] + int(self.numTiles[1] / 2)) - offsetY):
-			for mapX in range(
-				(self.pos[0] - int(self.numTiles[0] / 2)) - offsetX,
-				(self.pos[0] + int(self.numTiles[0] / 2)) - offsetX):
+			(self.pos[1] + int(self.numTiles[1] / 2)) - offsetY)
+		print(yranges)
+		#paint screen
+		for mapY in yranges:
+			for mapX in xranges:
 				point = self.map[mapY][mapX]
-				print("Point (x: {}, y: {}) is {}".format(mapX, mapY, point))
-				print("Screen (x: {}, y: {})".format(screenX, screenY))
+				# print("Point (x: {}, y: {}) is {}".format(mapX, mapY, point))
+				# print("Screen (x: {}, y: {})".format(screenX, screenY))
 				if point == "0":
 					color = (0,200,0)
 				elif point == "1":
 					color = (200, 200, 200)
 				elif point == "#":
-					color = (0,0,0)
+					color = (255,255,255)
 				pg.draw.rect(
 						self.screen,
 						color,
-						pg.Rect(screenX, screenY, 16, 16)
+						pg.Rect(screenX, screenY, self.tileSize, self.tileSize)
 					)
 				screenX += self.tileSize
+				if screenX > self.numTiles[0]:
+					break
 			screenY += self.tileSize
+			if screenY > self.numTiles[1]:
+				break
 		pg.display.flip()
 
 	def events(self):
@@ -105,15 +111,17 @@ class Player(Client):
 				return False
 		pressed = pg.key.get_pressed()
 		if pressed[self.controls['up']]:
-			self.pos[1] -= 1
+			self.pos -= (0, 1)
 		elif pressed[self.controls['down']]:
-			self.pos[1] += 1
+			self.pos += (0, 1)
 		elif pressed[self.controls['left']]:
-			self.pos[0] -= 1
+			self.pos -= (1, 0)
 		elif pressed[self.controls['right']]:
-			self.pos[0] += 1
+			self.pos += (1, 0)
 
 		pg.event.pump()
 	
 	def run(self):
-		self.gui()
+		while True:
+			self.gui()
+			self.events()
