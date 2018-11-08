@@ -6,9 +6,9 @@ class Sprite(pg.sprite.Sprite):
 		self.img = pg.image.load(img)
 		self.rect = self.img.get_rect()
 		self.rotation = 0
+		self.map = map
 		self.pos = [0, 0]
 		self.screen = screen
-		self.map = map
 
 	def update(self):
 		pg.transform.rotate(self.img, self.rotation)

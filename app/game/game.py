@@ -12,7 +12,6 @@ import app.game.server as server
 
 
 def singlePlayer(screen):
-	print("THING")
 	options = match.options(
 		'127.0.0.1:5000',
 		256,

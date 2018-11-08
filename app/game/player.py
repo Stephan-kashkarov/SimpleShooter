@@ -74,12 +74,12 @@ class Player(Client):
 		#fill screen
 		self.screen.fill((0,0,0))
 
-		xranges = range((self.pos[0] - int(self.numTiles[0] / 2)) - offsetX, (self.pos[0] + int(self.numTiles[0] / 2)) - offsetX)
-		print(xranges)
+		xranges = range(
+			(self.pos[0] - int(self.numTiles[0] / 2)) - offsetX, (self.pos[0] + int(self.numTiles[0] / 2)) - offsetX
+			)
 		yranges = range(
 			(self.pos[1] - int(self.numTiles[1] / 2)) - offsetY,
 			(self.pos[1] + int(self.numTiles[1] / 2)) - offsetY)
-		print(yranges)
 		#paint screen
 		for mapY in yranges:
 			for mapX in xranges:
