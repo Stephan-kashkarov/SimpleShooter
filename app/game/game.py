@@ -24,9 +24,10 @@ def singlePlayer(screen):
 	server_.start()
 	# allow for the server to initializse
 	time.sleep(3)
-	game = match.Match(options, _map)
 	player1 = player.Player(options.serverIP, screen)
 	player2 = player.AI(options.serverIP)
+	players = [player1, player2]
+	game = match.Match(options, _map, players)
 
 	# Making Threads
 	gameThread = threading.Thread(target=game.run)

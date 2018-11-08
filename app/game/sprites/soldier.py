@@ -3,15 +3,13 @@ import random
 import pygame as pg
 
 import app.game.sprites.sprite as sprite
+import app.game.sprites.bullet as bullet
 
 
 class Soldier(sprite.Sprite):
-	def __init__(self, screen, map, img):
+	def __init__(self, screen, map, img, x, y):
 		super().__init__(screen, map, img)
-		self.pos = [random.randint(1, len(self.map[1]) - 1), random.randint(1, len(self.map) - 1)]
-
-	def move(self, x, y):
-		pass
+		self.pos = [x, y]
 
 	def shoot(self):
 		pass

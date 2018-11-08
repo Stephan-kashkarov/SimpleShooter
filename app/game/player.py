@@ -1,28 +1,37 @@
 import time
+import json
+import random
 import requests
 
 import pygame as pg
 
-import app.game.sprites.bullet as bullet
-import app.game.sprites.soldier as soldier
 
 
 class Client(object):
 	def __init__(self, ip):
 		self.ip = "http://" + ip
 		self.map = ""
-		self.pos = (0,0)
 		self.getMap()
-		# self.sprite = soldier.Soldier()
+		self.pos = self.genXY()
+		self.unitPoses = {}
+
 
 	def getMap(self):
 		self.map = requests.get(str(self.ip + '/map/get')).json()
 
 	def getUnits(self):
-		pass
+		self.unitPoses = requests.get(str(self.ip + '/units/get')).json()
 		
 	def sendUnits(self):
-		pass
+		requests.post(str(self.ip + '/units/send'), json=json.loads())
+
+	def genXY(self):
+		x = random.randint(1, len(self.map[0]) - 1)
+		y = random.randint(1, len(self.map) - 1)
+		while not self.map[y][x] == "0":
+			x = random.randint(1, len(self.map[0]) - 1)
+			y = random.randint(1, len(self.map) - 1)
+		return [x, y]
 
 class AI(Client):
 	def __init__(self, ip):
@@ -50,6 +59,8 @@ class Player(Client):
 			'left': pg.K_a,
 			'right': pg.K_d
 		}
+		self.units = {}
+		self.getUnits()
 
 	def gui(self):
 		screenX = 0

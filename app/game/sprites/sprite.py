@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 class Sprite(pg.sprite.Sprite):
 	def __init__(self, screen, map, img):
 		super().__init__()
@@ -11,5 +12,8 @@ class Sprite(pg.sprite.Sprite):
 		self.screen = screen
 
 	def update(self):
+		pass
+
+	def draw(self):
 		pg.transform.rotate(self.img, self.rotation)
 		self.screen.blit(self.img, self.pos)

@@ -4,6 +4,9 @@ import requests
 
 import pygame as pg
 
+import app.game.sprites.bullet as bullet
+import app.game.sprites.soldier as soldier
+
 
 class options(object):
 	def __init__(self, serverIP, mapSize, key):
@@ -13,10 +16,15 @@ class options(object):
 
 
 class Match(object):
-	def __init__(self, options, _map):
+	def __init__(self, options, _map, players):
 		self.serverIP = 'http://' + options.serverIP
 		self.map = _map
 		self.key = options.key
+		self.players = players
+		self.playerGroup = pg.sprite.Group()
+		self.bulletGroup = pg.sprite.Group()
+		for player in self.players:
+			self.playerGroup.add(player.sprite)
 		self.units = []
 		self.setUnits()
 		self.sendMap()
