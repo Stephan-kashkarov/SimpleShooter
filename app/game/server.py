@@ -64,9 +64,9 @@ class Server(object):
 			handler=self.getUnits
 		)
 		self.add_endpoint(
-			endpoint='/units/add',
-			endpoint_name='addUnits',
-			handler=self.addUnits,
+			endpoint='/unit/send',
+			endpoint_name='sendUnit',
+			handler=self.sendUnit,
 			_methods=['POST']
 		)
 		self.add_endpoint(
@@ -85,12 +85,12 @@ class Server(object):
 			return 'True'
 		return 'False'
 
-	def addUnits(self):
+	def sendUnit(self):
 		data = json.loads(request.json)
-		if data['key'] == self.key:
-			data = data['payload']
-			self.units[data['key']][data['index']] = data['value']
-		return 'False'
+		id = data['id']
+		unitPos = data['unitPos']
+		self.units[id] = unitPos
+		return 'True'
 
 	def setUnits(self):
 		data = json.loads(request.json)

@@ -25,14 +25,14 @@ class Match(object):
 		self.bulletGroup = pg.sprite.Group()
 		for player in self.players:
 			self.playerGroup.add(player.sprite)
-		self.units = []
+		self.unitPoses = []
 		self.setUnits()
 		self.sendMap()
 
 	# Unit Processing
 
 	def getUnits(self):
-		self.units = requests.get(str(self.serverIP + '/units/get')).json()
+		self.unitPoses = requests.get(str(self.serverIP + '/units/get')).json()
 
 	def setUnits(self):
 		requests.post(

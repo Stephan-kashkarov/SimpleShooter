@@ -10,20 +10,28 @@ import pygame as pg
 class Client(object):
 	def __init__(self, ip):
 		self.ip = "http://" + ip
+		self.id = 0
 		self.map = ""
 		self.getMap()
 		self.pos = self.genXY()
 		self.unitPoses = {}
+		self.getUnits()
 
 
 	def getMap(self):
-		self.map = requests.get(str(self.ip + '/map/get')).json()
+		data = requests.get(str(self.ip + '/map/get')).json()
+		self.map = data['map']
+		self.id = data['id']
 
 	def getUnits(self):
 		self.unitPoses = requests.get(str(self.ip + '/units/get')).json()
 		
 	def sendUnits(self):
-		requests.post(str(self.ip + '/units/send'), json=json.loads())
+		data = {
+			'id': self.id,
+			'unitPos': self.unitPoses[self.id]
+		}
+		requests.post(str(self.ip + '/units/send'), json=json.dumps(data))
 
 	def genXY(self):
 		x = random.randint(1, len(self.map[0]) - 1)
@@ -86,8 +94,8 @@ class Player(Client):
 		self.screen.fill((0,0,0))
 
 		xranges = range(
-			(self.pos[0] - int(self.numTiles[0] / 2)) - offsetX, (self.pos[0] + int(self.numTiles[0] / 2)) - offsetX
-			)
+			(self.pos[0] - int(self.numTiles[0] / 2)) - offsetX,
+			(self.pos[0] + int(self.numTiles[0] / 2)) - offsetX)
 		yranges = range(
 			(self.pos[1] - int(self.numTiles[1] / 2)) - offsetY,
 			(self.pos[1] + int(self.numTiles[1] / 2)) - offsetY)
