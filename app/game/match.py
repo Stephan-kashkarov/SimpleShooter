@@ -39,7 +39,7 @@ class Match(object):
 			str(self.serverIP + '/units/set'),
 			json=json.dumps({
 				'key': self.key,
-				'payload': self.units
+				'payload': self.unitPoses
 			})
 		)
 	
