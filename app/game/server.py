@@ -24,6 +24,7 @@ class Server(object):
 		#server stuff
 		self.name = "Game Server"
 		self.app = Flask(self.name)
+		self.id = 0
 
 		#Game stuff
 		self.gameState = False
@@ -101,7 +102,9 @@ class Server(object):
 
 	# get routes
 	def getMap(self):
-		return json.dumps(self.map)
+		id = self.id
+		self.id += 1
+		return json.dumps({'map':self.map, 'id':id})
 
 	def getUnits(self):
 		return json.dumps(self.units)

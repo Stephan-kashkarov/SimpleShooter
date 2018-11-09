@@ -7,9 +7,9 @@ import app.game.sprites.bullet as bullet
 
 
 class Soldier(sprite.Sprite):
-	def __init__(self, screen, map, img, x, y):
-		super().__init__(screen, map, img)
-		self.pos = [x, y]
+	def __init__(self, map, pos):
+		super().__init__(map, img)
+		self.pos = pos
 
 	def shoot(self):
 		pass

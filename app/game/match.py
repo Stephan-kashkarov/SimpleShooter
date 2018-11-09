@@ -24,7 +24,7 @@ class Match(object):
 		self.playerGroup = pg.sprite.Group()
 		self.bulletGroup = pg.sprite.Group()
 		for player in self.players:
-			self.playerGroup.add(player.sprite)
+			self.playerGroup.add(soldier.Soldier(self.map, player.pos))
 		self.unitPoses = []
 		self.setUnits()
 		self.sendMap()
@@ -48,11 +48,13 @@ class Match(object):
 
 	# Map Processing
 	def sendMap(self):
-		requests.post(str(self.serverIP + '/map/set'),
-		json=json.dumps({
-			'key': self.key,
-			'map': self.map
-		}))
+		requests.post(
+			str(self.serverIP + '/map/set'),
+			json=json.dumps({
+				'key': self.key,
+				'map': self.map
+			})
+		)
 
 	def checkWin(self):
 		return False if not bool(requests.get(self.serverIP + '/game/over')) else True

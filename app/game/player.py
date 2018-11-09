@@ -6,6 +6,8 @@ import requests
 import pygame as pg
 
 
+import app.game.sprites.soldier as soldier
+
 
 class Client(object):
 	def __init__(self, ip):
@@ -60,7 +62,6 @@ class Player(Client):
 		self.resX, self.resY = self.screen.get_rect().size
 		self.tileSize = 16
 		self.numTiles = (self.resX / self.tileSize, self.resY / self.tileSize)
-		self.pos = [0,0]
 		self.controls = {
 			'up': pg.K_w,
 			'down': pg.K_s,
