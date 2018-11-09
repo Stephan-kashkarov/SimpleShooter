@@ -14,7 +14,7 @@ import app.game.server as server
 def singlePlayer(screen):
 	options = match.options(
 		'127.0.0.1:5000',
-		256,
+		2000,
 		random.randint(1000, 9999)
 	)
 
@@ -23,7 +23,7 @@ def singlePlayer(screen):
 	server_ = multiprocessing.Process(target=host.run)
 	server_.start()
 	# allow for the server to initializse
-	time.sleep(3)
+	time.sleep(1)
 	player1 = player.Player(options.serverIP, screen)
 	player2 = player.AI(options.serverIP)
 	players = [player1, player2]

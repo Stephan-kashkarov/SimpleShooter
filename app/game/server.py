@@ -31,8 +31,7 @@ class Server(object):
 		self.map = _map
 		self.units = {
 			'bullets': [],
-			'players': [],
-			'zombies': []
+			'players': {}
 		}
 		self.key = key
 
@@ -71,6 +70,12 @@ class Server(object):
 			_methods=['POST']
 		)
 		self.add_endpoint(
+			endpoint='/bullet/send',
+			endpoint_name='sendBullet',
+			handler=self.sendBullet,
+			_methods=['POST']
+		)
+		self.add_endpoint(
 			endpoint='/game/over',
 			endpoint_name='gameOver',
 			handler=self.gameOver
@@ -90,7 +95,7 @@ class Server(object):
 		data = json.loads(request.json)
 		id = data['id']
 		unitPos = data['unitPos']
-		self.units[id] = unitPos
+		self.units['players'][id] = unitPos
 		return 'True'
 
 	def setUnits(self):
@@ -99,6 +104,12 @@ class Server(object):
 			self.units = data['payload']
 			return 'True'
 		return 'False'
+
+	def sendBullet(self):
+		data = json.loads(request.json)
+		bulletData = data['bulletData']
+		self.units['bullets'].append(bulletData)
+		return 'True'
 
 	# get routes
 	def getMap(self):

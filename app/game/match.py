@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import requests
 
@@ -20,14 +21,16 @@ class Match(object):
 		self.serverIP = 'http://' + options.serverIP
 		self.map = _map
 		self.key = options.key
+		self.sendMap()
+		time.sleep(2)
 		self.players = players
 		self.playerGroup = pg.sprite.Group()
 		self.bulletGroup = pg.sprite.Group()
+		self.unitPoses = {'players':{}, 'bullets':[]}
 		for player in self.players:
 			self.playerGroup.add(soldier.Soldier(self.map, player.pos))
-		self.unitPoses = []
+			self.unitPoses['players'][player.id] = [player.pos, player.rot]
 		self.setUnits()
-		self.sendMap()
 
 	# Unit Processing
 
