@@ -33,11 +33,14 @@ def singlePlayer(screen):
 	aiThread = multiprocessing.Process(target=player2.run)
 	# Starting Threads
 	gameThread.start()
+	print("Running AI")
 	aiThread.start()
 	# Running clientside
 	state = player1.run()
 	# Joining of threads
+	gameThread.terminate()
 	gameThread.join()
+	aiThread.terminate()
 	aiThread.join()
 	server_.terminate()
 	server_.join(5)
