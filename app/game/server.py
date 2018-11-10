@@ -95,7 +95,8 @@ class Server(object):
 		data = json.loads(request.json)
 		id = data['id']
 		unitPos = data['unitPos']
-		self.units['players'][id] = unitPos
+		self.units['players'][str(id)] = unitPos
+		print("SERVER: {}".format("Units: {} ||| From: {}".format(self.units['players'], id)))
 		return 'True'
 
 	def setUnits(self):

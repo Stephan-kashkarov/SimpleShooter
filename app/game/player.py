@@ -11,12 +11,12 @@ import app.game.sprites.soldier as soldier
 
 
 class Client(object):
-	def __init__(self, ip):
+	def __init__(self, ip, map):
 		self.ip = "http://" + ip
-		time.sleep(1)
-		self.map = ""
+		self.map = map
 		self.rot = 0
 		self.id = 0
+		time.sleep(1)
 		self.getMap()
 		self.pos = self.genXY()
 		self.unitPoses = {}
@@ -34,9 +34,9 @@ class Client(object):
 	def sendUnits(self):
 		data = {
 			'id': self.id,
-			'unitPos': self.unitPoses[str(self.id)]
+			'unitPos': self.unitPoses['players'][str(self.id)]
 		}
-		requests.post(str(self.ip + '/units/send'), json=json.dumps(data))
+		requests.post(str(self.ip + '/unit/send'), json=json.dumps(data))
 
 	def genXY(self):
 		x = random.randint(1, len(self.map[0]) - 1)
@@ -45,22 +45,31 @@ class Client(object):
 			x = random.randint(1, len(self.map[0]) - 1)
 			y = random.randint(1, len(self.map) - 1)
 		return [x, y]
+	
+	def updatePos(self):
+		self.unitPoses['players'][str(self.id)][0] = self.pos
 
 class AI(Client):
-	def __init__(self, ip):
-		super().__init__(ip)
+	def __init__(self, ip, map):
+		super().__init__(ip, map)
+		print("AI INIT")
 
 	def actions(self):
-		pass
+		self.pos[0] += 1
+		if self.pos[0] > 100:
+			self.pos[0] = 50
+
 
 	def run(self):
+		print("AI")
 		self.getUnits()
 		self.actions()
+		self.updatePos()
 		self.sendUnits()
 
 class Player(Client):
-	def __init__(self, ip, screen):
-		super().__init__(ip)
+	def __init__(self, ip, map, screen):
+		super().__init__(ip, map)
 		self.screen = screen
 		self.resX, self.resY = self.screen.get_rect().size
 		self.tileSize = 16
@@ -77,12 +86,10 @@ class Player(Client):
 		}
 
 	def gui(self):
-		self.paintMap()
-		self.paintSprites()
+		self.paintGame()
 		pg.display.flip()
 
-	def paintMap(self):
-		print(self.unitPoses['players'][str(self.id)][0])
+	def paintGame(self):
 		self.pos = self.unitPoses['players'][str(self.id)][0]
 		screenX = 0
 		screenY = 0
@@ -130,15 +137,15 @@ class Player(Client):
 				screenX += self.tileSize
 			screenX = 0
 			screenY += self.tileSize
-
-	def paintSprites(self):
+		
 		for id, player in self.unitPoses['players'].items():
-			if id == self.id:
-				sprite = self.sprites['green']
-			else:
-				sprite = self.sprites['red']
-			pg.transform.rotate(sprite, player[1])
-			self.screen.blit(sprite, player[0])
+			if player[0][1] in yranges and player[0][0] in xranges:
+				if id == self.id:
+					sprite = self.sprites['green']
+				else:
+					sprite = self.sprites['red']
+				pg.transform.rotate(sprite, player[1])
+				self.screen.blit(sprite, player[0])
 		# for pos, rot, types in self.unitPoses['bullets']:
 		# 	pass
 
@@ -149,32 +156,24 @@ class Player(Client):
 		pressed = pg.key.get_pressed()
 		
 		if pressed[self.controls['up']]:
-			self.unitPoses['players'][str(self.id)][0][1] -= 1
-			if self.map[self.unitPoses['players'][str(self.id)][0][1]][self.unitPoses['players'][str(self.id)][0][0]] != 0:
-				self.unitPoses['players'][str(self.id)][0][1] += 1
+			self.pos[1] -= 1
 		elif pressed[self.controls['down']]:
-			self.unitPoses['players'][str(self.id)][0][1] += 1
-			if self.map[self.unitPoses['players'][str(self.id)][0][1]][self.unitPoses['players'][str(self.id)][0][0]] != 0:
-				self.unitPoses['players'][str(self.id)][0][1] -= 1
+			self.pos[1] += 1
 		elif pressed[self.controls['left']]:
-			self.unitPoses['players'][str(self.id)][0][0] -= 1
-			if self.map[self.unitPoses['players'][str(self.id)][0][1]][self.unitPoses['players'][str(self.id)][0][0]] != 0:
-				self.unitPoses['players'][str(self.id)][0][0] += 1
+			self.pos[0] -= 1
 		elif pressed[self.controls['right']]:
-			self.unitPoses['players'][str(self.id)][0][0] += 1
-			if self.map[self.unitPoses['players'][str(self.id)][0][1]][self.unitPoses['players'][str(self.id)][0][0]] != 0:
-				self.unitPoses['players'][str(self.id)][0][0] -= 1
+			self.pos[0] += 1
 
-		mousePos = pg.mouse.get_pos()
+		# mousePos = pg.mouse.get_pos()
 
 
-		gradient = (
-			(mousePos[1] - self.unitPoses['players'][str(self.id)][0][1])
-			/(mousePos[0] - self.unitPoses['players'][str(self.id)][0][0])
-		)
-		self.unitPoses['players'][str(self.id)]['rot'] = math.degrees(
-			math.atan(gradient)
-		)
+		# gradient = (
+		# 	(mousePos[1] - self.unitPoses['players'][str(self.id)][0][1])
+		# 	/(mousePos[0] - self.unitPoses['players'][str(self.id)][0][0])
+		# )
+		# self.unitPoses['players'][str(self.id)]['rot'] = math.degrees(
+		# 	math.atan(gradient)
+		# )
 
 
 		pg.event.pump()
@@ -184,4 +183,5 @@ class Player(Client):
 			self.getUnits()
 			self.gui()
 			self.events()
+			self.updatePos()
 			self.sendUnits()
