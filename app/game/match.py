@@ -21,6 +21,7 @@ class Match(object):
 		self.serverIP = 'http://' + options.serverIP
 		self.map = _map
 		self.key = options.key
+		self.clock = pg.time.Clock()
 		self.sendMap()
 		time.sleep(2)
 		self.players = players

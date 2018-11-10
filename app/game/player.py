@@ -108,7 +108,6 @@ class Player(Client):
 			offsetX = (self.pos[0] - int(self.numTiles[0] / 2))
 		elif (self.pos[0] + int(self.numTiles[0] / 2)) > len(self.map):
 			offsetX = (self.pos[0] + int(self.numTiles[0] / 2)) - len(self.map[0])
-		print("X", offsetX)
 
 		#Y offset
 		if (self.pos[1] - int(self.numTiles[1] / 2)) < 0:
@@ -116,7 +115,6 @@ class Player(Client):
 		elif (self.pos[1] + int(self.numTiles[1] / 2)) > len(self.map[0]):
 			offsetY = (self.pos[1] + int(self.numTiles[1] / 2)) - len(self.map)
 
-		print("Y", offsetY)
 		#fill screen
 		self.screen.fill((0, 0, 0))
 
@@ -146,16 +144,26 @@ class Player(Client):
 			screenY += self.tileSize
 		
 		for id, player in self.unitPoses['players'].items():
+			print(id, player)
 			if player[0][1] in yranges and player[0][0] in xranges:
 				if id == self.id:
 					sprite = self.sprites['green']
 				else:
 					sprite = self.sprites['red']
-				pg.transform.rotate(sprite, player[1])
 				screenCoord = [
 					(player[0][0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
 					(player[0][1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
 				]
+				if id == self.id:
+					mousePos = pg.mouse.get_pos()
+					try:
+						ygrad = (mousePos[1] - screenCoord[1])
+						xgrad = (mousePos[0] - screenCoord[0])
+					except:
+						ygrad = 0
+						xgrad = 0
+					player[1] = (0 - math.degrees(math.atan2(ygrad, xgrad)) - 90)
+				sprite = pg.transform.rotate(sprite, player[1])
 				self.screen.blit(sprite, screenCoord)
 		# for pos, rot, types in self.unitPoses['bullets']:
 		# 	pass
@@ -175,20 +183,11 @@ class Player(Client):
 		elif pressed[self.controls['right']]:
 			self.posChange = [1, 0]
 
-		print(self.map[self.pos[1]][self.pos[0]])
-
-		# mousePos = pg.mouse.get_pos()
 
 
-		# gradient = (
-		# 	(mousePos[1] - self.unitPoses['players'][str(self.id)][0][1])
-		# 	/(mousePos[0] - self.unitPoses['players'][str(self.id)][0][0])
-		# )
-		# self.unitPoses['players'][str(self.id)]['rot'] = math.degrees(
-		# 	math.atan(gradient)
-		# )
 
-
+		
+		
 		pg.event.pump()
 	
 	def run(self):

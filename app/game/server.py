@@ -27,6 +27,7 @@ class Server(object):
 		self.app = Flask(self.name)
 		log = logging.getLogger('werkzeug')
 		log.setLevel(logging.ERROR)
+		del log
 		self.id = 0
 
 		#Game stuff

@@ -15,7 +15,6 @@ class Game(object):
 		self.res = (settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT)
 		self.screen = pg.display.set_mode(self.res)
 		pg.display.set_caption("STEPHAN IS COOL MAYBE?")
-		self.clock = pg.time.Clock()
 		self.screen.fill((255,255,255))
 		pg.display.flip()
 		self.run()
