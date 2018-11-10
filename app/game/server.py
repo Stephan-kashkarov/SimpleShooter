@@ -2,6 +2,7 @@ from flask import Flask, Response, request, make_response
 from flask_socketio import send, emit
 import json
 import time
+import logging
 
 # parts of this code where found
 # on stackoverflow:
@@ -24,6 +25,8 @@ class Server(object):
 		#server stuff
 		self.name = "Game Server"
 		self.app = Flask(self.name)
+		log = logging.getLogger('werkzeug')
+		log.setLevel(logging.ERROR)
 		self.id = 0
 
 		#Game stuff
@@ -96,7 +99,6 @@ class Server(object):
 		id = data['id']
 		unitPos = data['unitPos']
 		self.units['players'][str(id)] = unitPos
-		print("SERVER: {}".format("Units: {} ||| From: {}".format(self.units['players'], id)))
 		return 'True'
 
 	def setUnits(self):

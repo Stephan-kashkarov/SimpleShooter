@@ -13,7 +13,7 @@ import app.game.server as server
 def singlePlayer(screen):
 	options = match.options(
 		'127.0.0.1:5000',
-		2000,
+		256,
 		random.randint(1000, 9999)
 	)
 
@@ -31,9 +31,9 @@ def singlePlayer(screen):
 	# Making Threads
 	gameThread = multiprocessing.Process(target=game.run)
 	aiThread = multiprocessing.Process(target=player2.run)
+	time.sleep(1)
 	# Starting Threads
 	gameThread.start()
-	print("Running AI")
 	aiThread.start()
 	# Running clientside
 	state = player1.run()

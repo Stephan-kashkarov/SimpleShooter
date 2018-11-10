@@ -29,7 +29,7 @@ class Match(object):
 		self.unitPoses = {'players':{}, 'bullets':[]}
 		for player in self.players:
 			self.playerGroup.add(soldier.Soldier(self.map, player.pos))
-			self.unitPoses['players'][player.id] = [player.pos, player.rot]
+			self.unitPoses['players'][player.id] = [player.pos, player.rot, [0, 0]]
 		self.setUnits()
 
 	# Unit Processing
@@ -47,7 +47,10 @@ class Match(object):
 		)
 	
 	def updateUnits(self):
-		pass
+		for id, player in self.unitPoses['players'].items():
+			if self.map[player[0][1] + player[2][1]][player[0][0] + player[2][0]] not in ["#", "1"]:
+				player[0][0] += player[2][0]
+				player[0][1] += player[2][1]
 
 	# Map Processing
 	def sendMap(self):
@@ -64,9 +67,8 @@ class Match(object):
 
 	def run(self):
 		while True:
-			print('Game: tick')
 			self.getUnits()
 			self.updateUnits()
 			self.setUnits()
-			if self.checkWin() == True:
-				break
+			# if self.checkWin() == True:
+			# 	break
