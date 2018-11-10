@@ -48,7 +48,7 @@ class Match(object):
 		)
 	
 	def updateUnits(self):
-		for id, player in self.unitPoses['players'].items():
+		for player in self.unitPoses['players'].values():
 			if self.map[player[0][1] + player[2][1]][player[0][0] + player[2][0]] not in ["#", "1"]:
 				player[0][0] += player[2][0]
 				player[0][1] += player[2][1]

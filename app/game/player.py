@@ -57,13 +57,7 @@ class AI(Client):
 		super().__init__(ip, map)
 
 	def actions(self):
-		if self.pos[0] < 220:
-			self.posChange = [1, 0]
-		elif self.pos[1] < 150:
-			self.posChange = [0, -1]
-		else:
-			self.pos = 50
-
+		pass
 
 	def run(self):
 		while True:
@@ -144,7 +138,6 @@ class Player(Client):
 			screenY += self.tileSize
 		
 		for id, player in self.unitPoses['players'].items():
-			print(id, player)
 			if player[0][1] in yranges and player[0][0] in xranges:
 				if id == self.id:
 					sprite = self.sprites['green']
@@ -154,7 +147,7 @@ class Player(Client):
 					(player[0][0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
 					(player[0][1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
 				]
-				if id == self.id:
+				if id == str(self.id):
 					mousePos = pg.mouse.get_pos()
 					try:
 						ygrad = (mousePos[1] - screenCoord[1])
@@ -182,6 +175,9 @@ class Player(Client):
 			self.posChange = [-1, 0]
 		elif pressed[self.controls['right']]:
 			self.posChange = [1, 0]
+
+		if pg.mouse.get_pressed()[0]:
+			print("PEW")
 
 
 
