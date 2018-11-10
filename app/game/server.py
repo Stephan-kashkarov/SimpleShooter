@@ -111,9 +111,11 @@ class Server(object):
 
 	def sendBullet(self):
 		data = json.loads(request.json)
-		bulletData = data['bulletData']
-		self.units['bullets'].append(bulletData)
+		data.append(self.id)
+		self.id += 1
+		self.units['bullets'].append()
 		return 'True'
+
 
 	# get routes
 	def getMap(self):

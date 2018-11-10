@@ -156,6 +156,7 @@ class Player(Client):
 						ygrad = 0
 						xgrad = 0
 					player[1] = (0 - math.degrees(math.atan2(ygrad, xgrad)) - 90)
+					self.rot = player[1]
 				sprite = pg.transform.rotate(sprite, player[1])
 				self.screen.blit(sprite, screenCoord)
 		# for pos, rot, types in self.unitPoses['bullets']:
@@ -178,6 +179,7 @@ class Player(Client):
 
 		if pg.mouse.get_pressed()[0]:
 			print("PEW")
+			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot]))
 
 
 
