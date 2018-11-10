@@ -3,7 +3,6 @@ import random
 import pygame as pg
 
 import app.game.sprites.sprite as sprite
-import app.game.sprites.bullet as bullet
 
 
 class Soldier(sprite.Sprite):

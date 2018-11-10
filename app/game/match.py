@@ -5,7 +5,7 @@ import requests
 
 import pygame as pg
 
-import app.game.sprites.bullet as bullet
+import app.game.sprites.bullet as _bullet
 import app.game.sprites.soldier as soldier
 
 
@@ -58,15 +58,22 @@ class Match(object):
 					if playerObj.id == str(id):
 						playerObj.pos = player[0]
 
+		print(len(self.bulletGroup.sprites()))
+
 		for bullet in self.unitPoses['bullets']:
-			if bullet['id'] in [bullet.id for bullet in self.bulletGroup.sprites()]:
+			if str(bullet[2]) in [str(bullet.id) for bullet in self.bulletGroup.sprites()]:
 				for bulletObj in self.bulletGroup.sprites():
-					if bulletObj.id == bullet['id']:
-						bulletObj.step()
-						bullet['pos'] = bulletObj.pos
+					if str(bulletObj.id) == str(bullet[2]):
+						if bulletObj.dead:
+							self.bulletGroup.remove(bulletObj)
+							bullet[2] = -1
+						else:
+							bulletObj.update()
+							bullet[0] = bulletObj.pos
 			else:
-				newBullet = bullet.Bullet(bullet)
-				self.bulletGroup.add(newBullet)
+				if str(bullet[2]) != '-1':
+					newBullet = _bullet.Bullet(self.map, bullet[0], bullet[2], bullet[1])
+					self.bulletGroup.add(newBullet)
 
 	# Map Processing
 	def sendMap(self):

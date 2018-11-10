@@ -113,7 +113,7 @@ class Server(object):
 		data = json.loads(request.json)
 		data.append(self.id)
 		self.id += 1
-		self.units['bullets'].append()
+		self.units['bullets'].append(data)
 		return 'True'
 
 
@@ -136,7 +136,7 @@ class Server(object):
 		return str(self.gameOver)
 
 	def test(self):
-		return "<title>Hell0!</title>"
+		return "<head><title>Hell0!</title></head><body>Server is ONLINE!</body>"
 
 	def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, _methods=None):
 		self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler), methods=_methods)

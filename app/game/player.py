@@ -80,8 +80,9 @@ class Player(Client):
 			'right': pg.K_d
 		}
 		self.sprites = {
-			'green': pg.image.load('app/game/sprites/imgs/player.png'),
-			'red': pg.image.load('app/game/sprites/imgs/player.png')
+			'green': pg.image.load('app/game/sprites/imgs/player1.png'),
+			'red': pg.image.load('app/game/sprites/imgs/player2.png'),
+			'bullet': pg.image.load('app/game/sprites/imgs/bullet.png')
 		}
 
 	def gui(self):
@@ -139,7 +140,7 @@ class Player(Client):
 		
 		for id, player in self.unitPoses['players'].items():
 			if player[0][1] in yranges and player[0][0] in xranges:
-				if id == self.id:
+				if str(id) == str(self.id):
 					sprite = self.sprites['green']
 				else:
 					sprite = self.sprites['red']
@@ -159,8 +160,13 @@ class Player(Client):
 					self.rot = player[1]
 				sprite = pg.transform.rotate(sprite, player[1])
 				self.screen.blit(sprite, screenCoord)
-		# for pos, rot, types in self.unitPoses['bullets']:
-		# 	pass
+		for pos, rot, id in self.unitPoses['bullets']:
+			screenCoord = [
+					(pos[0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
+					(pos[1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
+				]
+			sprite = pg.transform.rotate(self.sprites['bullet'], (rot))
+			self.screen.blit(sprite, screenCoord)
 
 	def events(self):
 		for event in pg.event.get():
@@ -178,7 +184,6 @@ class Player(Client):
 			self.posChange = [1, 0]
 
 		if pg.mouse.get_pressed()[0]:
-			print("PEW")
 			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot]))
 
 
