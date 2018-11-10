@@ -160,7 +160,7 @@ class Player(Client):
 					self.rot = player[1]
 				sprite = pg.transform.rotate(sprite, player[1])
 				self.screen.blit(sprite, screenCoord)
-		for pos, rot, id in self.unitPoses['bullets']:
+		for pos, rot, ownerid, id in self.unitPoses['bullets']:
 			screenCoord = [
 					(pos[0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
 					(pos[1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
@@ -184,7 +184,7 @@ class Player(Client):
 			self.posChange = [1, 0]
 
 		if pg.mouse.get_pressed()[0]:
-			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot]))
+			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot, self.id]))
 
 
 

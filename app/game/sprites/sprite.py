@@ -8,7 +8,3 @@ class Sprite(pg.sprite.Sprite):
 		self.map = map
 		self.pos = [0, 0]
 		self.id = id
-
-	def update(self):
-		pass
-
