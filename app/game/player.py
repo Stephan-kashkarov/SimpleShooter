@@ -169,7 +169,6 @@ class Player(Client):
 			self.screen.blit(sprite, screenCoord)
 
 	def events(self):
-		print(len(self.unitPoses['players']))
 		if len(self.unitPoses['players']) < 2:
 			return True
 	

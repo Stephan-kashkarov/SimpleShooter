@@ -79,15 +79,13 @@ class Match(object):
 		for player, bullets in collisons.items():
 			for bullet in bullets:
 				if str(bullet.id) != str(player.id):
+					bullets.pop(bullets.index(bullet))
 					print("Player {} has been hit. Health left: {}".format(player.id, player.health))
 					bullet.kill()
 					player.health -= 2
 					if player.health <= 0:
 						player.kill()
-						print(self.unitPoses['players'])
 						del self.unitPoses['players'][str(player.id)]
-						print(self.unitPoses['players'])
-						print(len(self.unitPoses['players']))
 						self.setUnits()
 						return 0
 
