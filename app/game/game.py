@@ -1,4 +1,5 @@
 import time
+import pprint
 import random
 import requests
 import multiprocessing
@@ -58,13 +59,20 @@ def encounter(screen, controls):
 	return 0
 
 def singlePlayer(screen, controls):
-	_map = _map = maps.generateMap(9)
+	screen.fill((0,0,0))
+	clock = pg.time.Clock()
+	_map = _map = maps.generateMap(8)
 	tileSize = screen.get_rect().height / 9
 	playerPos = [1, 1]
+	_map[playerPos[1]][playerPos[0]] = '4'
 	enemyPoses = []
-	for i in range(random.randint(3, 5)):
-		enemyPoses.append([random.randint(1, len(map)-1), random.randint(1, len(map)-1)])
-		_map[enemyPoses[-1][1]][enemyPoses[-1][0]] == "3"
+	for i in range(random.randint(2, 4)):
+		x = random.randint(1, len(_map)-2)
+		y = random.randint(1, len(_map)-2)
+		enemyPoses.append([x, y])
+		_map[y][x] = "3"
+
+	pprint.pprint(_map)
 	while True:
 		for y in range(len(_map)):
 			for x in range(len(_map[0])):
@@ -73,8 +81,10 @@ def singlePlayer(screen, controls):
 					color = (0, 200, 0)
 				elif point == "1":
 					color = (200, 200, 200)
-				elif point == "2":
+				elif point == "3":
 					color = (255, 0, 0)
+				elif point == "4":
+					color = (0, 255, 0)
 				elif point == "#":
 					color = (255, 255, 255)
 				pg.draw.rect(
@@ -90,14 +100,37 @@ def singlePlayer(screen, controls):
 
 		pressed = pg.key.get_pressed()
 
+
+		 # im sorry for this
 		if pressed[controls['up']]:
-			playerPos[1] -= 1 if _map[playerPos[0]][playerPos[1] - 1] in ["1", "0"] else 0
+			if _map[playerPos[0]][playerPos[1] - 1] in ["0", "3"]:
+				_map[playerPos[1]][playerPos[0]] = '0'
+				playerPos[1] -= 1
+				_map[playerPos[1]][playerPos[0]] = '4'
+
 		elif pressed[controls['down']]:
-			playerPos[1] += 1 if _map[playerPos[0]][playerPos[1] + 1] in ["1", "0"] else 0
+			if _map[playerPos[0]][playerPos[1] + 1] in ["0", "3"]:
+				_map[playerPos[1]][playerPos[0]] = '0'
+				playerPos[1] += 1
+				_map[playerPos[1]][playerPos[0]] = '4'
+
 		elif pressed[controls['left']]:
-			playerPos[0] -= 1 if _map[playerPos[0] - 1][playerPos[1]] in ["1", "0"] else 0
+			if _map[playerPos[0] - 1][playerPos[1]] in ["0", "3"]:
+				_map[playerPos[1]][playerPos[0]] = '0'
+				playerPos[0] -= 1
+				_map[playerPos[1]][playerPos[0]] = '4'
+				
 		elif pressed[controls['right']]:
-			playerPos[0] += 1 if _map[playerPos[0] + 1][playerPos[1]] in ["1", "0"] else 0
+			if _map[playerPos[0] + 1][playerPos[1]] in ["0", "3"]:
+				_map[playerPos[1]][playerPos[0]] = '0'
+				playerPos[0] += 1
+				_map[playerPos[1]][playerPos[0]] = '4'
+
+		if playerPos in enemyPoses:
+			encounter(screen, controls)
+			enemyPoses.pop(enemyPoses.index(playerPos))
+		clock.tick(10)
+		pg.display.flip()
 
 	return 0
 
