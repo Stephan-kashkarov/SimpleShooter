@@ -7,15 +7,23 @@ import pygame as pg
 import app.game.match as match
 import app.assets.menu as menu
 import app.game.map.map as maps
-import app.game.player as player
+import app.game.clients.player as player
+import app.game.clients.ai as ai
 import app.game.server as server
 
 
 def singlePlayer(screen):
 	menu.loadingScreen(screen)
+	controls = {
+		'up': pg.K_w,
+		'down': pg.K_s,
+		'left': pg.K_a,
+		'right': pg.K_d,
+		'reload': pg.K_r
+        }
 	options = match.options(
 		'127.0.0.1:5000',
-		100,
+		256,
 		random.randint(1000, 9999)
 	)
 	_map = maps.generateMap(options.mapSize)
@@ -24,8 +32,8 @@ def singlePlayer(screen):
 	server_.start()
 	# allow for the server to initializse
 	time.sleep(1)
-	player1 = player.Player(options.serverIP, _map, screen)
-	player2 = player.AI(options.serverIP, _map)
+	player1 = player.Player(options.serverIP, _map, screen, controls)
+	player2 = ai.AI(options.serverIP, _map)
 	players = [player1, player2]
 	game = match.Match(options, _map, players)
 

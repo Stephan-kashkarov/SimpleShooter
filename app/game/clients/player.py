@@ -7,78 +7,18 @@ import requests
 import pygame as pg
 
 
+import app.game.clients.client as client
 import app.game.sprites.soldier as soldier
 
 
-class Client(object):
-	def __init__(self, ip, map):
-		self.ip = "http://" + ip
-		self.map = map
-		self.rot = 0
-		self.id = 0
-		time.sleep(1)
-		self.getMap()
-		self.pos = self.genXY()
-		self.posChange = [0, 0]
-		self.unitPoses = {}
-		self.getUnits()
-
-
-	def getMap(self):
-		data = requests.get(str(self.ip + '/map/get')).json()
-		self.map = data['map']
-		self.id = data['id']
-
-	def getUnits(self):
-		self.unitPoses = requests.get(str(self.ip + '/units/get')).json()
-		self.posChange = [0, 0]
-		
-	def sendUnits(self):
-		data = {
-			'id': self.id,
-			'unitPos': self.unitPoses['players'][str(self.id)]
-		}
-		requests.post(str(self.ip + '/unit/send'), json=json.dumps(data))
-
-	def genXY(self):
-		x = random.randint(1, len(self.map[0]) - 1)
-		y = random.randint(1, len(self.map) - 1)
-		while not self.map[y][x] == "0":
-			x = random.randint(1, len(self.map[0]) - 1)
-			y = random.randint(1, len(self.map) - 1)
-		return [x, y]
-	
-	def updatePos(self):
-		self.unitPoses['players'][str(self.id)][0] = self.pos
-		self.unitPoses['players'][str(self.id)][2] = self.posChange
-
-class AI(Client):
-	def __init__(self, ip, map):
-		super().__init__(ip, map)
-
-	def actions(self):
-		pass
-
-	def run(self):
-		while True:
-			self.getUnits()
-			self.actions()
-			self.updatePos()
-			self.sendUnits()
-
-class Player(Client):
-	def __init__(self, ip, map, screen):
+class Player(client.Client):
+	def __init__(self, ip, map, screen, controls):
 		super().__init__(ip, map)
 		self.screen = screen
 		self.resX, self.resY = self.screen.get_rect().size
-		self.tileSize = 16
+		self.tileSize = 8
 		self.numTiles = (self.resX / self.tileSize, self.resY / self.tileSize)
-		self.controls = {
-			'up': pg.K_w,
-			'down': pg.K_s,
-			'left': pg.K_a,
-			'right': pg.K_d
-		}
+		self.controls = controls
 		self.sprites = {
 			'green': pg.image.load('app/game/sprites/imgs/player1.png'),
 			'red': pg.image.load('app/game/sprites/imgs/player2.png'),
@@ -86,10 +26,14 @@ class Player(Client):
 		}
 
 	def gui(self):
-		self.paintGame()
+		state = self.paintGame()
 		pg.display.flip()
+		return state
 
 	def paintGame(self):
+		state = 0
+		if len(self.unitPoses['players']) < 2:
+			return True
 		self.pos = self.unitPoses['players'][str(self.id)][0]
 		screenX = 0
 		screenY = 0
@@ -145,8 +89,8 @@ class Player(Client):
 				else:
 					sprite = self.sprites['red']
 				screenCoord = [
-					(player[0][0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
-					(player[0][1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
+					(player[0][0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*self.tileSize,
+					(player[0][1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*self.tileSize
 				]
 				if id == str(self.id):
 					mousePos = pg.mouse.get_pos()
@@ -162,11 +106,12 @@ class Player(Client):
 				self.screen.blit(sprite, screenCoord)
 		for pos, rot, ownerid, id in self.unitPoses['bullets']:
 			screenCoord = [
-					(pos[0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*16,
-					(pos[1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*16
+					(pos[0] - (self.pos[0] - int(self.numTiles[0] / 2)) + offsetX)*self.tileSize,
+					(pos[1] - (self.pos[1] - int(self.numTiles[1] / 2)) + offsetY)*self.tileSize
 				]
 			sprite = pg.transform.rotate(self.sprites['bullet'], (rot))
 			self.screen.blit(sprite, screenCoord)
+		return state
 
 	def events(self):
 		if len(self.unitPoses['players']) < 2:
@@ -185,9 +130,13 @@ class Player(Client):
 			self.posChange = [-1, 0]
 		elif pressed[self.controls['right']]:
 			self.posChange = [1, 0]
+		elif pressed[self.controls['reload']]:
+			self.ammo = 100
 
 		if pg.mouse.get_pressed()[0]:
-			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot, self.id]))
+			if self.ammo > 0:
+				requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot, self.id]))
+				self.ammo -= 1
 
 
 		pg.event.pump()
@@ -196,7 +145,9 @@ class Player(Client):
 	def run(self):
 		while True:
 			self.getUnits()
-			self.gui()
+			state = self.gui()
+			if state != 0:
+				return state
 			state = self.events()
 			if state != 0:
 				return state

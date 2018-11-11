@@ -10,7 +10,7 @@ class Soldier(sprite.Sprite):
 		super().__init__(map, id)
 		self.health = 1000
 		self.pos = pos
-		self.rect = pg.Rect(self.pos[0], self.pos[1], 32, 32)
+		self.rect = pg.Rect(self.pos[0], self.pos[1], 2, 2)
 
 	def move(self, pos):
 		self.pos = pos

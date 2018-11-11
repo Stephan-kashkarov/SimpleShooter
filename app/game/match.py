@@ -34,6 +34,7 @@ class Match(object):
 			id += 1
 			self.unitPoses['players'][player.id] = [player.pos, player.rot, [0, 0]]
 		self.setUnits()
+		self.clock = pg.time.Clock()
 
 	# Unit Processing
 
@@ -50,13 +51,6 @@ class Match(object):
 		)
 	
 	def updateUnits(self):
-		for id, player in self.unitPoses['players'].items():
-			if self.map[player[0][1] + player[2][1]][player[0][0] + player[2][0]] not in ["#", "1"]:
-				player[0][0] += player[2][0]
-				player[0][1] += player[2][1]
-				for playerObj in self.playerGroup.sprites():
-					if playerObj.id == str(id):
-						playerObj.move(player[0]) 
 
 
 		for bullet in self.unitPoses['bullets']:
@@ -78,16 +72,26 @@ class Match(object):
 		collisons = pg.sprite.groupcollide(self.playerGroup, self.bulletGroup, False, False)
 		for player, bullets in collisons.items():
 			for bullet in bullets:
-				if str(bullet.id) != str(player.id):
-					bullets.pop(bullets.index(bullet))
+				if str(bullet.ownerid) != str(player.id):
 					print("Player {} has been hit. Health left: {}".format(player.id, player.health))
-					bullet.kill()
 					player.health -= 2
 					if player.health <= 0:
 						player.kill()
+						bullet.kill()
 						del self.unitPoses['players'][str(player.id)]
 						self.setUnits()
 						return 0
+					break
+
+		for id, player in self.unitPoses['players'].items():
+			if self.map[player[0][1] + player[2][1]][player[0][0] + player[2][0]] not in ["#", "1"]:
+				player[0][0] += player[2][0]
+				player[0][1] += player[2][1]
+				for playerObj in self.playerGroup.sprites():
+					if playerObj.id == str(id):
+						player[3] = player.health
+						playerObj.move(player[0])
+		# self.clock.tick(128)
 
 	# Map Processing
 	def sendMap(self):

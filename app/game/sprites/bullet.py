@@ -15,7 +15,7 @@ class Bullet(sprite.Sprite):
 		self.velY = 0.5 * math.sin(math.radians(self.rot))
 		self.dead = False
 		self.ownerid = ownerid
-		self.rect = pg.Rect(self.pos[0], self.pos[1], 16, 16)
+		self.rect = pg.Rect(self.pos[0], self.pos[1], 2, 2)
 
 	def update(self):
 		if self.map[int(self.pos[1])][int(self.pos[0])] != "0":
