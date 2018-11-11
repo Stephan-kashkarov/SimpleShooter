@@ -1,5 +1,6 @@
 import time
 import random
+import requests
 import multiprocessing
 
 import pygame as pg
@@ -45,7 +46,10 @@ def singlePlayer(screen):
 	gameThread.start()
 	aiThread.start()
 	# Running clientside
-	state = player1.run()
+	try:
+		state = player1.run()
+	except:
+		pass
 	menu.loadingScreen(screen)
 	# Joining of threads
 	gameThread.terminate()
@@ -59,3 +63,12 @@ def singlePlayer(screen):
 		pg.quit()
 		quit()
 	return 0
+
+def mulitplayerUser(screen, options):
+	menu.loadingScreen(screen)
+	player1 = player.Player(options.serverIP, options._map, options.screen, options.controls)
+	player1.run()
+	menu.loadingScreen(screen)
+
+def multiplayerHost(screen, options):
+	pass

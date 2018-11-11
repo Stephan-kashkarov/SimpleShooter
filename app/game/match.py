@@ -32,7 +32,7 @@ class Match(object):
 		for player in self.players:
 			self.playerGroup.add(soldier.Soldier(self.map, player.pos, id))
 			id += 1
-			self.unitPoses['players'][player.id] = [player.pos, player.rot, [0, 0]]
+			self.unitPoses['players'][player.id] = [player.pos, player.rot, [0, 0], player.health]
 		self.setUnits()
 		self.clock = pg.time.Clock()
 
@@ -75,11 +75,13 @@ class Match(object):
 				if str(bullet.ownerid) != str(player.id):
 					print("Player {} has been hit. Health left: {}".format(player.id, player.health))
 					player.health -= 2
+					self.unitPoses['players'][str(player.id)][3] = player.health
 					if player.health <= 0:
+						self.unitPoses['players'][str(player.id)][3] = 0
+						self.setUnits()
 						player.kill()
 						bullet.kill()
 						del self.unitPoses['players'][str(player.id)]
-						self.setUnits()
 						return 0
 					break
 
@@ -91,7 +93,7 @@ class Match(object):
 					if playerObj.id == str(id):
 						player[3] = player.health
 						playerObj.move(player[0])
-		# self.clock.tick(128)
+		self.clock.tick(128)
 
 	# Map Processing
 	def sendMap(self):

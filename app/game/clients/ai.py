@@ -28,7 +28,7 @@ class AI(client.Client):
 		pos2 = self.unitPoses['players']['0'][0]
 
 		distance = math.sqrt(((pos2[1] - pos1[1])**2) +
-		                     ((pos2[0] - pos1[0])**2)) - 25
+		                     ((pos2[0] - pos1[0])**2)) - 100
 		if distance == 0:
 			self.posChange = [0, 0]
 		elif distance < 0:

@@ -99,7 +99,15 @@ class Server(object):
 		data = json.loads(request.json)
 		id = data['id']
 		unitPos = data['unitPos']
-		self.units['players'][str(id)] = unitPos
+		if unitPos[3] > self.units['players'][str(id)][3]:
+			self.units['players'][str(id)] = [
+								unitPos[0],
+								unitPos[1],
+								unitPos[2], 
+								self.units['players'][str(id)][3]
+							]
+		else:
+			self.units['players'][str(id)] = unitPos
 		return 'True'
 
 	def setUnits(self):

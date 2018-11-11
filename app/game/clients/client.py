@@ -23,6 +23,7 @@ class Client(object):
 		self.getUnits()
 		self.ammo = 100
 		self.timer = 0
+		self.health = 1000
 
 	def getMap(self):
 		data = requests.get(str(self.ip + '/map/get')).json()

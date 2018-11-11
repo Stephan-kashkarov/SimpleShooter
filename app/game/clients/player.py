@@ -83,6 +83,10 @@ class Player(client.Client):
 			screenY += self.tileSize
 		
 		for id, player in self.unitPoses['players'].items():
+			print(player)
+			if player[3] == 0:
+				del self.unitPoses['players'][id]
+				continue
 			if player[0][1] in yranges and player[0][0] in xranges:
 				if str(id) == str(self.id):
 					sprite = self.sprites['green']
