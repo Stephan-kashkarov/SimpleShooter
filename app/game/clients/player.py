@@ -120,12 +120,12 @@ class Player(client.Client):
 	def events(self):
 		if len(self.unitPoses['players']) < 2:
 			return True
-	
+
 		for event in pg.event.get():
 			if event.type == pg.QUIT:
 				return False
 		pressed = pg.key.get_pressed()
-		
+
 		if pressed[self.controls['up']]:
 			self.posChange = [0, -1]
 		elif pressed[self.controls['down']]:

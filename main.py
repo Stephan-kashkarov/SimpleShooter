@@ -17,13 +17,20 @@ class Game(object):
 		pg.display.set_caption("STEPHAN IS COOL MAYBE?")
 		self.screen.fill((255,255,255))
 		pg.display.flip()
+		self.controls = {
+			'up': pg.K_w,
+			'down': pg.K_s,
+			'left': pg.K_a,
+			'right': pg.K_d,
+			'reload': pg.K_r
+        }
 		self.run()
 
 	def run(self):
 		while True:
 			state = menu.menu(self.screen)
 			if state == 1:
-				game.singlePlayer(self.screen)
+				game.singlePlayer(self.screen, self.controls)
 			elif state == 2:
 				pass
 				# options = menu.multiplayerSettings(self.screen)
