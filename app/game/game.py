@@ -1,3 +1,5 @@
+# imporst
+
 import time
 import pprint
 import random
@@ -15,41 +17,49 @@ import app.game.server as server
 
 
 def encounter(screen, controls):
-	menu.loadingScreen(screen)
+	"""Lauchnes an encounter"""
+	menu.loadingScreen(screen) # loading screen
 	options = match.options(
 		'127.0.0.1:5000',
 		256,
 		random.randint(1000, 9999)
-	)
-	_map = maps.generateMap(options.mapSize)
-	host = server.Server(_map, options.key)
-	server_ = multiprocessing.Process(target=host.run)
-	server_.start()
+	) # options object
+	_map = maps.generateMap(options.mapSize) # generates map
+	host = server.Server(_map, options.key) # inits server
+	server_ = multiprocessing.Process(target=host.run)  # puts server on process
+	server_.start()  # runs server on process
 	# allow for the server to initializse
 	time.sleep(1)
-	player1 = player.Player(options.serverIP, _map, screen, controls)
-	player2 = ai.AI(options.serverIP, _map)
-	players = [player1, player2]
-	game = match.Match(options, _map, players)
+	player1 = player.Player(options.serverIP, _map, screen, controls) # inits player obj
+	ais = []
+	aiThreads = []
+	for i in range( random.randint(1, 2)): # makes 1 or 2 bots
+		ai_ = ai.AI(options.serverIP, _map)
+		aiThreads.append(multiprocessing.Process(target=ai_.run))
+		ais.append(ai_)
+
+	ais.append(player1)
+	game = match.Match(options, _map, ais)
 
 	# Making Threads
 	gameThread = multiprocessing.Process(target=game.run)
-	aiThread = multiprocessing.Process(target=player2.run)
-	time.sleep(1)
+	time.sleep(1) # for sync
 	# Starting Threads
 	gameThread.start()
-	aiThread.start()
+	for aiThread in aiThreads:
+		aiThread.start()
 	# Running clientside
 	try:
 		state = player1.run()
 	except:
-		pass
+		state= True
 	menu.loadingScreen(screen)
 	# Joining of threads
 	gameThread.terminate()
 	gameThread.join()
-	aiThread.terminate()
-	aiThread.join()
+	for aiThread in aiThreads:
+		aiThread.terminate()
+		aiThread.join()
 	server_.terminate()
 	server_.join(5)
 	time.sleep(3)
@@ -119,7 +129,7 @@ def singlePlayer(screen, controls):
 				_map[playerPos[1]][playerPos[0]] = '0'
 				playerPos[0] -= 1
 				_map[playerPos[1]][playerPos[0]] = '4'
-				
+
 		elif pressed[controls['right']]:
 			if _map[playerPos[0] + 1][playerPos[1]] in ["0", "3"]:
 				_map[playerPos[1]][playerPos[0]] = '0'

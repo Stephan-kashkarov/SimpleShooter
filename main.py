@@ -8,15 +8,21 @@ import app.assets.settings as settings
 
 
 class Game(object):
+	"""Game object
+		main container for game
+	"""
 	def __init__(self):
+		# pygame inits
 		pg.init()
 		pg.mixer.init()
 		pg.font.init()
+		# screen inits
 		self.res = (settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT)
 		self.screen = pg.display.set_mode(self.res)
 		pg.display.set_caption("STEPHAN IS COOL MAYBE?")
 		self.screen.fill((255,255,255))
 		pg.display.flip()
+		# control inits
 		self.controls = {
 			'up': pg.K_w,
 			'down': pg.K_s,
@@ -24,9 +30,13 @@ class Game(object):
 			'right': pg.K_d,
 			'reload': pg.K_r
         }
+		# runs game
 		self.run()
 
 	def run(self):
+		"""Run funtion
+			runs the game
+		"""
 		while True:
 			state = menu.menu(self.screen)
 			if state == 1:
@@ -37,11 +47,11 @@ class Game(object):
 				# game.multiplayer(self.screen, options)
 			elif state == 3:
 				pass
-				# menu.settings(self.screen)
+				menu.setting(self.screen)
 			else:
 				pg.quit()
 				quit()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # allows for extention
 	Game()

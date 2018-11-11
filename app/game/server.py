@@ -10,12 +10,14 @@ import logging
 
 
 class EndpointAction(object):
+	"""Does the actions for a endpoint of a route"""
 
 	def __init__(self, action):
 		self.action = action
 		self.response = ""
 
 	def __call__(self, *args):
+		"""When action called"""
 		self.response = make_response(self.action())
 		return self.response
 
@@ -25,9 +27,10 @@ class Server(object):
 		#server stuff
 		self.name = "Game Server"
 		self.app = Flask(self.name)
+		# removes enormouse default log level
 		log = logging.getLogger('werkzeug')
 		log.setLevel(logging.ERROR)
-		del log
+		del log # removes var
 		self.id = 0
 
 		#Game stuff
@@ -89,6 +92,7 @@ class Server(object):
 
 	# set routes
 	def setMap(self):
+		"""Sets map"""
 		data = json.loads(request.json)
 		if data['key'] == self.key:
 			self.map = data['map']
@@ -96,10 +100,12 @@ class Server(object):
 		return 'False'
 
 	def sendUnit(self):
+		"""Gets  singular unit"""
 		data = json.loads(request.json)
 		id = data['id']
 		unitPos = data['unitPos']
 		if unitPos[3] > self.units['players'][str(id)][3]:
+			# if the health is higher then current health this is a outdated data
 			self.units['players'][str(id)] = [
 								unitPos[0],
 								unitPos[1],
@@ -111,6 +117,7 @@ class Server(object):
 		return 'True'
 
 	def setUnits(self):
+		"""Sets all units"""
 		data = json.loads(request.json)
 		if data['key'] == self.key:
 			self.units = data['payload']
@@ -118,6 +125,7 @@ class Server(object):
 		return 'False'
 
 	def sendBullet(self):
+		"""Creates bullet"""
 		data = json.loads(request.json)
 		data.append(self.id)
 		self.id += 1
@@ -138,6 +146,7 @@ class Server(object):
 	# Misc routes
 
 	def run(self):
+		"""Runs server (for process)"""
 		self.app.run()
 
 	def gameOver(self):
@@ -147,6 +156,7 @@ class Server(object):
 		return "<head><title>Hell0!</title></head><body>Server is ONLINE!</body>"
 
 	def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, _methods=None):
+		"""Generates a route for the server as decoraters would work differently here"""
 		self.app.add_url_rule(endpoint, endpoint_name, EndpointAction(handler), methods=_methods)
 
 
