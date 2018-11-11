@@ -83,12 +83,13 @@ class Match(object):
 					bullet.kill()
 					player.health -= 2
 					if player.health <= 0:
-						print('rip {}'.format(player.id))
 						player.kill()
 						print(self.unitPoses['players'])
 						del self.unitPoses['players'][str(player.id)]
-						if len(self.playerGroup.sprites()) < 2:
-							pass
+						print(self.unitPoses['players'])
+						print(len(self.unitPoses['players']))
+						self.setUnits()
+						return 0
 
 	# Map Processing
 	def sendMap(self):
@@ -106,7 +107,8 @@ class Match(object):
 	def run(self):
 		while True:
 			self.getUnits()
-			self.updateUnits()
+			if self.updateUnits() == 0:
+				break
 			self.setUnits()
 			# if self.checkWin() == True:
 			# 	break

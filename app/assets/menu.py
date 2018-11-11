@@ -46,3 +46,11 @@ def menu(screen):
 		screen
 	)
 	return result.run()
+
+def loadingScreen(screen):
+	screen.fill((0, 0, 0))
+	x, y = screen.get_rect().size
+	x = int(x/2)
+	y = int(y/2)
+	text.textBox("LOADING...", x, y, 72, (255, 255, 255), (0,0,0), screen).draw()
+	pg.display.flip()

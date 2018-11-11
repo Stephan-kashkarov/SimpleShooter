@@ -11,8 +11,8 @@ class Bullet(sprite.Sprite):
 		super().__init__(map, id)
 		self.pos = pos
 		self.rot = 0-rot-90
-		self.velX = 1 * math.cos(math.radians(self.rot))
-		self.velY = 1 * math.sin(math.radians(self.rot))
+		self.velX = 0.5 * math.cos(math.radians(self.rot))
+		self.velY = 0.5 * math.sin(math.radians(self.rot))
 		self.dead = False
 		self.ownerid = ownerid
 		self.rect = pg.Rect(self.pos[0], self.pos[1], 16, 16)

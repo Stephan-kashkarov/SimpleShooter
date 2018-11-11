@@ -169,6 +169,10 @@ class Player(Client):
 			self.screen.blit(sprite, screenCoord)
 
 	def events(self):
+		print(len(self.unitPoses['players']))
+		if len(self.unitPoses['players']) < 2:
+			return True
+	
 		for event in pg.event.get():
 			if event.type == pg.QUIT:
 				return False
@@ -187,16 +191,15 @@ class Player(Client):
 			requests.post(self.ip + '/bullet/send', json=json.dumps([self.pos, self.rot, self.id]))
 
 
-
-
-		
-		
 		pg.event.pump()
-	
+		return 0
+
 	def run(self):
 		while True:
 			self.getUnits()
 			self.gui()
-			self.events()
+			state = self.events()
+			if state != 0:
+				return state
 			self.updatePos()
 			self.sendUnits()
